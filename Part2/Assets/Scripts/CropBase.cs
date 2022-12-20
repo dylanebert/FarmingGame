@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public abstract class CropBase : ICrop {
     public abstract string name { get; }
     public abstract string description { get; }
@@ -8,5 +6,5 @@ public abstract class CropBase : ICrop {
     public abstract int seedsCost { get; }
     public abstract int coinsCost { get; }
     public abstract int menuIndex { get; }
-    public virtual int seedYield => Mathf.CeilToInt(growthTime / 15f);
+    public abstract int seedYield { get; }
 }

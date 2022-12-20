@@ -13,11 +13,14 @@ public class UpgradeManager : MonoBehaviour {
     public static List<IUpgrade> available { get; private set; }
     public static List<IUpgrade> unlocked { get; private set; }
 
+    static HashSet<string> unlockedKeys;
+
     void Awake() {
         instance = this;
         upgrades = new OrderedDictionary();
         available = new List<IUpgrade>();
         unlocked = new List<IUpgrade>();
+        unlockedKeys = new HashSet<string>();
         AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(x => x.GetTypes())
             .Where(x => typeof(IUpgrade).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
@@ -65,7 +68,13 @@ public class UpgradeManager : MonoBehaviour {
             return;
         }
         unlocked.Add(upgrade);
+        unlockedKeys.Add(upgrade.name);
         upgrade.Apply();
+        AudioManager.PlaySound("Coins");
         UpdateAvailable();
+    }
+
+    public static bool GetUnlocked(string key) {
+        return unlockedKeys.Contains(key);
     }
 }

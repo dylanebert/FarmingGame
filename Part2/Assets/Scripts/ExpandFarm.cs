@@ -15,7 +15,7 @@ public class ExpandFarmA : Expand {
 
 public class ExpandFarmB : Expand {
     public override string name => "Expand Farm II";
-    public override int coinsCost => 50;
+    public override int coinsCost => 100;
 
     protected override string[] GetPrerequisites() {
         return new string[] { "Expand Farm I" };

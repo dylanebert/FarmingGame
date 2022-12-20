@@ -44,6 +44,7 @@ public class CropManager : MonoBehaviour {
     public static void SelectPlot(Plot plot) {
         if(instance.focusedPlot == plot) return;
         CameraController.SetFocus(plot);
+        AudioManager.PlaySound("Click");
         instance.cropInfoDisplay.Show(plot);
         PointerManager.SetPointerMode(PointerManager.PointerMode.FocusCrop);
         instance.cancelFocusButton.gameObject.SetActive(true);
@@ -65,10 +66,6 @@ public class CropManager : MonoBehaviour {
 
     public static void RemoveCrop(Plot plot) {
         plot.Remove();
-    }
-
-    public static void HarvestCrop(Plot plot) {
-        plot.Harvest();
     }
 
     void PlaceCropInternal(Plot plot) {

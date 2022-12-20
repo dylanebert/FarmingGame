@@ -4,8 +4,4 @@ public class Sickle : UpgradeBase {
     public override int seedsCost => 0;
     public override int coinsCost => 5;
     public override int menuIndex => 0;
-
-    public override void Apply() {
-        throw new System.NotImplementedException();
-    }
 }

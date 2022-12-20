@@ -82,6 +82,32 @@ public class UIShop : MonoBehaviour {
             button.Initialize(crop);
             cropButtons.Add(button);
         }
+        List<int> a = new List<int>();
+        List<int> b = new List<int>();
+        for(int i = 0; i < cropButtons.Count; i++) {
+            if(i % 6 < 3) {
+                a.Add(i);
+            } else {
+                b.Add(i);
+            }
+        }
+
+        while(a.Count - b.Count > 1) {
+            int i = a[a.Count - 1];
+            a.RemoveAt(a.Count - 1);
+            b.Add(i);
+        }
+        int idx = 0;
+        while(a.Count > 0) {
+            cropButtons[a[0]].transform.SetSiblingIndex(idx);
+            a.RemoveAt(0);
+            idx++;
+        }
+        while(b.Count > 0) {
+            cropButtons[b[0]].transform.SetSiblingIndex(idx);
+            b.RemoveAt(0);
+            idx++;
+        }
         UpgradeManager.Changed += PopulateUpgrades;
         PopulateUpgrades();
         UpdateCropIndex();
@@ -102,7 +128,7 @@ public class UIShop : MonoBehaviour {
         }
         contentSequence.Append(content.DOAnchorPos(new Vector2(-cropIndex * 384, 0), 0.2f).SetEase(Ease.OutQuint));
         leftButton.gameObject.SetActive(cropIndex > 0);
-        rightButton.gameObject.SetActive(cropIndex < cropButtons.Count / 6);
+        rightButton.gameObject.SetActive(cropIndex < (cropButtons.Count - 1) / 6);
     }
 
     void UpdateUpgradeIndex() {
@@ -144,6 +170,32 @@ public class UIShop : MonoBehaviour {
             };
             button.Initialize(upgrade);
             upgradeButtons.Add(button);
+        }
+        List<int> a = new List<int>();
+        List<int> b = new List<int>();
+        for(int i = 0; i < upgradeButtons.Count; i++) {
+            if(i % 6 < 3) {
+                a.Add(i);
+            } else {
+                b.Add(i);
+            }
+        }
+
+        while(a.Count - b.Count > 1) {
+            int i = a[a.Count - 1];
+            a.RemoveAt(a.Count - 1);
+            b.Add(i);
+        }
+        int idx = 0;
+        while(a.Count > 0) {
+            upgradeButtons[a[0]].transform.SetSiblingIndex(idx);
+            a.RemoveAt(0);
+            idx++;
+        }
+        while(b.Count > 0) {
+            upgradeButtons[b[0]].transform.SetSiblingIndex(idx);
+            b.RemoveAt(0);
+            idx++;
         }
     }
 

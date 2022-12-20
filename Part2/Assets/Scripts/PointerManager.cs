@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -6,27 +7,47 @@ public class PointerManager : MonoBehaviour {
     public static PointerManager instance { get; private set; }
 
     [SerializeField] GameObject blueprint;
-    [SerializeField] GameObject hoverIndicator;
+    [SerializeField] SpriteRenderer hoverIndicator;
     [SerializeField] GameObject shopButton;
 
     PointerMode pointerMode = PointerMode.Default;
+    HoverMode hoverMode;
+    RaycastHit[] raycastHitResults;
     Vector2 mousePosition;
     Vector3 pointerPosition;
     Plane groundPlane;
     Plot hoverPlot;
     Plot prevHoverPlot;
+    LayerMask waterMask;
+    LayerMask harvestMask;
     bool pointerOverUI;
+    bool hoverWater;
+    bool hoverHarvest;
 
     void Awake() {
         instance = this;
         groundPlane = new Plane(Vector3.up, 0);
+        raycastHitResults = new RaycastHit[1];
+        waterMask = LayerMask.GetMask("WaterIcon");
+        harvestMask = LayerMask.GetMask("HarvestIcon");
+        UpgradeManager.Changed += () => {
+            hoverWater = UpgradeManager.GetUnlocked("Watering Can");
+            hoverHarvest = UpgradeManager.GetUnlocked("Sickle");
+        };
     }
 
     void Update() {
         pointerOverUI = EventSystem.current.IsPointerOverGameObject();
 
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-        if(groundPlane.Raycast(ray, out float enter)) {
+        hoverMode = HoverMode.Default;
+        if(hoverWater && Physics.RaycastNonAlloc(ray, raycastHitResults, float.PositiveInfinity, waterMask) > 0) {
+            pointerPosition = raycastHitResults[0].point;
+            hoverMode = HoverMode.Water;
+        } else if(hoverHarvest && Physics.RaycastNonAlloc(ray, raycastHitResults, float.PositiveInfinity, harvestMask) > 0) {
+            pointerPosition = raycastHitResults[0].point;
+            hoverMode = HoverMode.Harvest;
+        } else if(groundPlane.Raycast(ray, out float enter)) {
             pointerPosition = ray.GetPoint(enter);
         }
 
@@ -37,15 +58,38 @@ public class PointerManager : MonoBehaviour {
                     if(CropManager.ClampToPlot(pointerPosition, out Plot plot) && plot.currentCrop != null) {
                         hoverPlot = plot;
                         pointerPosition = plot.transform.position;
-                        hoverIndicator.transform.position = pointerPosition;
-                        hoverIndicator.SetActive(true);
+                        hoverIndicator.transform.position = pointerPosition + Vector3.up * 0.1f;
+                        switch(hoverMode) {
+                            case HoverMode.Water:
+                                hoverIndicator.color = Palette.instance.water;
+                                break;
+                            case HoverMode.Harvest:
+                                if(hoverPlot.harvestCount == 0)
+                                    hoverIndicator.color = Palette.instance.seeds;
+                                else
+                                    hoverIndicator.color = Palette.instance.coins;
+                                break;
+                            default:
+                                hoverIndicator.color = Color.white;
+                                break;
+                        }
+                        hoverIndicator.gameObject.SetActive(true);
                     } else {
-                        hoverIndicator.SetActive(false);
+                        hoverIndicator.gameObject.SetActive(false);
                     }
                     if(hoverPlot != null) {
                         if(Mouse.current.leftButton.wasPressedThisFrame) {
-                            AudioManager.PlaySound("Click");
-                            CropManager.SelectPlot(hoverPlot);
+                            switch(hoverMode) {
+                                case HoverMode.Water:
+                                    hoverPlot.Water();
+                                    break;
+                                case HoverMode.Harvest:
+                                    hoverPlot.Harvest();
+                                    break;
+                                default:                            
+                                    CropManager.SelectPlot(hoverPlot);
+                                    break;
+                            }
                         }
                     }
                     break;
@@ -62,8 +106,9 @@ public class PointerManager : MonoBehaviour {
                 default:
                     break;
             }
-            if(hoverPlot != null && hoverPlot != prevHoverPlot)
+            if(hoverPlot != null && hoverPlot != prevHoverPlot) {
                 AudioManager.PlaySound("Tick");
+            }
         }
         prevHoverPlot = hoverPlot;
     }
@@ -81,12 +126,12 @@ public class PointerManager : MonoBehaviour {
                 shopButton.SetActive(true);
                 break;
             case PointerMode.FocusCrop:
-                hoverIndicator.SetActive(false);
+                hoverIndicator.gameObject.SetActive(false);
                 blueprint.SetActive(false);
                 shopButton.SetActive(false);
                 break;
             case PointerMode.PlaceCrop:
-                hoverIndicator.SetActive(false);
+                hoverIndicator.gameObject.SetActive(false);
                 blueprint.SetActive(true);
                 shopButton.SetActive(false);
                 break;
@@ -101,5 +146,11 @@ public class PointerManager : MonoBehaviour {
         Default,
         PlaceCrop,
         FocusCrop,
+    }
+
+    public enum HoverMode {
+        Default,
+        Water,
+        Harvest
     }
 }

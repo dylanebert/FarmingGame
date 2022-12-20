@@ -16,5 +16,5 @@ public abstract class UpgradeBase : IUpgrade {
         return new string[0];
     }
 
-    public abstract void Apply();
+    public virtual void Apply() { }
 }
