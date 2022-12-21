@@ -1,14 +1,17 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PointerManager : MonoBehaviour {
     public static PointerManager instance { get; private set; }
+    public static event UnityAction HarvestIconClicked;
 
     [SerializeField] GameObject blueprint;
     [SerializeField] SpriteRenderer hoverIndicator;
     [SerializeField] GameObject shopButton;
+    [SerializeField] Texture2D cursorTexture;
+    [SerializeField] Vector2 hotSpot;
 
     PointerMode pointerMode = PointerMode.Default;
     HoverMode hoverMode;
@@ -30,10 +33,20 @@ public class PointerManager : MonoBehaviour {
         raycastHitResults = new RaycastHit[1];
         waterMask = LayerMask.GetMask("WaterIcon");
         harvestMask = LayerMask.GetMask("HarvestIcon");
-        UpgradeManager.Changed += () => {
-            hoverWater = UpgradeManager.GetUnlocked("Watering Can");
-            hoverHarvest = UpgradeManager.GetUnlocked("Sickle");
-        };
+        Cursor.SetCursor(cursorTexture, hotSpot, CursorMode.Auto);
+    }
+
+    void OnEnable() {
+        UpgradeManager.Changed += HandleUpgradeChanged;
+    }
+
+    void OnDisable() {
+        UpgradeManager.Changed -= HandleUpgradeChanged;
+    }
+
+    void HandleUpgradeChanged() {
+        hoverWater = UpgradeManager.GetUnlocked("Watering Can");
+        hoverHarvest = UpgradeManager.GetUnlocked("Sickle");
     }
 
     void Update() {
@@ -85,8 +98,9 @@ public class PointerManager : MonoBehaviour {
                                     break;
                                 case HoverMode.Harvest:
                                     hoverPlot.Harvest();
+                                    HarvestIconClicked?.Invoke();
                                     break;
-                                default:                            
+                                default:
                                     CropManager.SelectPlot(hoverPlot);
                                     break;
                             }

@@ -6,8 +6,6 @@ public class ShopManager : MonoBehaviour {
     public static event UnityAction SeedsChanged;
     public static event UnityAction CoinsChanged;
 
-    [SerializeField]
-
     int m_seeds;
     public int seeds {
         get {
@@ -36,8 +34,8 @@ public class ShopManager : MonoBehaviour {
 
     void Awake() {
         instance = this;
-        seeds = Parameters.instance.startingSeeds;
-        coins = Parameters.instance.startingCoins;
+        seeds = PlayerPrefs.GetInt("Seeds", Parameters.instance.startingSeeds);
+        coins = PlayerPrefs.GetInt("Coins", Parameters.instance.startingCoins);
     }
 
     public static void TryBuyCrop(ICrop crop) {

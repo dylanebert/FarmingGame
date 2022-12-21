@@ -52,6 +52,18 @@ public class CropInfoDisplay : MonoBehaviour {
         root.SetActive(false);
     }
 
+    void OnEnable() {
+        UpgradeManager.Changed += HandleUpgradeChanged;
+    }
+
+    void OnDisable() {
+        UpgradeManager.Changed -= HandleUpgradeChanged;
+    }
+
+    void HandleUpgradeChanged() {
+        removeButton.gameObject.SetActive(UpgradeManager.GetUnlocked("Shovel"));
+    }
+
     void Update() {
         if(boundPlot == null) return;
         UpdateStatus();
@@ -120,10 +132,6 @@ public class CropInfoDisplay : MonoBehaviour {
     public void Water() {
         if(boundPlot == null) return;
         boundPlot.Water();
-    }
-
-    public void ToggleRemoveButton(bool active) {
-        removeButton.gameObject.SetActive(active);
     }
 
     public void Hide() {

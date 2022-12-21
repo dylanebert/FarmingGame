@@ -2,21 +2,30 @@ using System;
 using System.Collections.Specialized;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CropManager : MonoBehaviour {
     public static CropManager instance { get; private set; }
+    public static event UnityAction CropPlaced;
+    public static event UnityAction PlotSelected;
+    public static event UnityAction HarvestableChanged;
 
     [SerializeField] UIButton cancelPlaceCropsButton;
     [SerializeField] UIButton cancelFocusButton;
     [SerializeField] CropInfoDisplay cropInfoDisplay;
+    [SerializeField] UIButton waterAllButton;
+    [SerializeField] UIButton harvestAllButton;
 
     public Plot[] plots;
 
     public static OrderedDictionary crops { get; private set; }
 
+    public bool allowHarvestAll { get; set; }
+    public bool allowWaterAll { get; set; }
+    public int expansion { get; private set; }
+
     ICrop placingCrop;
     Plot focusedPlot;
-    int expansion;
     bool placed;
 
     void Awake() {
@@ -27,7 +36,32 @@ public class CropManager : MonoBehaviour {
             .Where(x => typeof(ICrop).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
             .Select(x => (ICrop)Activator.CreateInstance(x))
             .OrderBy(x => x.menuIndex).ToList().ForEach(x => crops.Add(x.name, x));
-        ExpandInternal();
+    }
+
+    void OnEnable() {
+        expansion = 1;
+        for(int i = 0; i < plots.Length; i++) {
+            plots[i].Initialize(i);
+            if(plots[i].active) {
+                plots[i].WateredChanged += HandleWateredChanged;
+                plots[i].HarvestableChanged += HandleHarvestableChanged;
+            }
+        }
+        UpgradeManager.Changed += HandleUpgradeChanged;
+    }
+
+    void OnDisable() {
+        UpgradeManager.Changed -= HandleUpgradeChanged;
+        if(!placed && placingCrop != null) {
+            ShopManager.Refund(placingCrop);
+        }
+    }
+
+    void HandleUpgradeChanged() {
+        allowHarvestAll = UpgradeManager.GetUnlocked("Scythe");
+        allowWaterAll = UpgradeManager.GetUnlocked("Sprinkler");
+        HandleHarvestableChanged();
+        HandleWateredChanged();
     }
 
     public static void Expand() {
@@ -36,9 +70,38 @@ public class CropManager : MonoBehaviour {
 
     void ExpandInternal() {
         expansion++;
-        int crops = Mathf.Clamp(expansion* 3, 0, plots.Length);
-        for(int i = 0; i < crops; i++)
+        int crops = Mathf.Clamp(expansion * 3, 0, plots.Length);
+        for(int i = 0; i < crops; i++) {
+            plots[i].WateredChanged += HandleWateredChanged;
+            plots[i].HarvestableChanged += HandleHarvestableChanged;
             plots[i].SetActive(true);
+        }
+    }
+
+    void HandleWateredChanged() {
+        if(!allowWaterAll) return;
+        bool watered = true;
+        for(int i = 0; i < plots.Length; i++) {
+            if(!plots[i].active) break;
+            if(plots[i].currentCrop == null) continue;
+            watered &= plots[i].watered;
+            if(!watered) break;
+        }
+        waterAllButton.gameObject.SetActive(!watered);
+    }
+
+    void HandleHarvestableChanged() {
+        bool harvestable = false;
+        for(int i = 0; i < plots.Length; i++) {
+            if(!plots[i].active) break;
+            if(plots[i].currentCrop == null) continue;
+            harvestable |= plots[i].harvestable;
+            if(harvestable) {
+                HarvestableChanged?.Invoke();
+                break;
+            }
+        }
+        harvestAllButton.gameObject.SetActive(allowHarvestAll && harvestable);
     }
 
     public static void SelectPlot(Plot plot) {
@@ -49,6 +112,7 @@ public class CropManager : MonoBehaviour {
         PointerManager.SetPointerMode(PointerManager.PointerMode.FocusCrop);
         instance.cancelFocusButton.gameObject.SetActive(true);
         instance.focusedPlot = plot;
+        PlotSelected?.Invoke();
     }
 
     public static void DeselectPlot() {
@@ -74,6 +138,7 @@ public class CropManager : MonoBehaviour {
         CameraController.Shake();
         AudioManager.PlaySound("Place");
         Clear();
+        CropPlaced?.Invoke();
     }
 
     public static void BeginPlacingCrop(string cropName) {
@@ -114,6 +179,20 @@ public class CropManager : MonoBehaviour {
         PointerManager.SetPointerMode(PointerManager.PointerMode.Default);
         cancelPlaceCropsButton.gameObject.SetActive(false);
         UnhighlightCrops();
+    }
+
+    public void WaterAll() {
+        foreach(Plot plot in plots) {
+            if(plot.currentCrop != null && !plot.watered)
+                plot.Water();
+        }
+    }
+
+    public void HarvestAll() {
+        foreach(Plot plot in plots) {
+            if(plot.currentCrop != null && plot.harvestable)
+                plot.Harvest();
+        }
     }
 
     void HighlightCrops() {

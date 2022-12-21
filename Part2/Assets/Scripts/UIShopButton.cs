@@ -11,15 +11,20 @@ public class UIShopButton : UIButton {
 
     public IPurchasable purchasable { get; private set; }
 
-    public void Initialize(IPurchasable crop) {
-        this.purchasable = crop;
-        title.text = crop.name;
-        cost.text = UIShop.GetPriceText(purchasable);
-        thumbnail.sprite = Resources.Load<Sprite>($"Thumbnails/{crop.name}");
+    public void Initialize(IPurchasable purchasable) {
+        this.purchasable = purchasable;
+        title.text = purchasable.name;
+        cost.text = UIShop.GetPriceText(this.purchasable);
+        thumbnail.sprite = Resources.Load<Sprite>($"Thumbnails/{purchasable.name}");
         ShopManager.SeedsChanged += UpdateText;
-        if(crop.coinsCost > 0)
+        if(purchasable.coinsCost > 0)
             ShopManager.CoinsChanged += UpdateText;
         UpdateText();
+    }
+
+    void OnDestroy() {
+        ShopManager.SeedsChanged -= UpdateText;
+        ShopManager.CoinsChanged -= UpdateText;
     }
 
     public override void OnPointerDown(PointerEventData eventData) {

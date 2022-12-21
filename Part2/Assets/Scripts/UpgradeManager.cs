@@ -31,6 +31,18 @@ public class UpgradeManager : MonoBehaviour {
         UpdateAvailable();
     }
 
+    void Start() {
+        foreach(string key in upgrades.Keys) {
+            if(PlayerPrefs.GetInt(key, 0) == 1) {
+                IUpgrade upgrade = upgrades[key] as IUpgrade;
+                unlocked.Add(upgrade);
+                unlockedKeys.Add(key);
+                upgrade.Apply();
+            }
+        }
+        UpdateAvailable();
+    }
+
     public static void UpdateAvailable() {
         available.Clear();
         foreach(IUpgrade upgrade in upgrades.Values) {

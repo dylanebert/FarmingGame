@@ -4,8 +4,4 @@ public class Shovel : UpgradeBase {
     public override int seedsCost => 0;
     public override int coinsCost => 50;
     public override int menuIndex => 2;
-
-    public override void Apply() {
-        CropInfoDisplay.instance.ToggleRemoveButton(true);
-    }
 }

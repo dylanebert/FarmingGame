@@ -1,7 +1,11 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Plot : MonoBehaviour {
+    public event UnityAction WateredChanged;
+    public event UnityAction HarvestableChanged;
+
     public ICrop currentCrop { get; private set; }
 
     public float growth { get; private set; }
@@ -15,7 +19,7 @@ public class Plot : MonoBehaviour {
         private set {
             if(_watered != value) {
                 _watered = value;
-                WateredChanged();
+                OnWateredChanged();
             }
         }
     }
@@ -28,7 +32,7 @@ public class Plot : MonoBehaviour {
         private set {
             if(_harvestable != value) {
                 _harvestable = value;
-                HarvestableChanged();
+                OnHarvestableChanged();
             }
         }
     }
@@ -43,11 +47,20 @@ public class Plot : MonoBehaviour {
     public GameObject coinIcon;
     public TextMeshPro text;
 
-    void Awake() {
-        growth = 0;
-        harvestCount = 0;
-        harvestable = false;
-        watered = false;
+    public void Initialize(int index) {
+        active = index < 3 ? true : PlayerPrefs.GetInt("Plot" + index + "Active", 0) == 1;
+        string cropName = PlayerPrefs.GetString("Plot" + index + "Crop", "");
+        if(cropName != "" && CropManager.crops.Contains(cropName)) {
+            currentCrop = CropManager.crops[cropName] as ICrop;
+            dirtMesh.SetActive(true);
+        } else {
+            currentCrop = null;
+            dirtMesh.SetActive(false);
+        }
+        harvestCount = PlayerPrefs.GetInt("Plot" + index + "HarvestCount", 0);
+        watered = PlayerPrefs.GetInt("Plot" + index + "Watered", 0) == 1;
+        growth = PlayerPrefs.GetFloat("Plot" + index + "Growth", 0);
+        OnWateredChanged();
     }
 
     void Update() {
@@ -74,7 +87,7 @@ public class Plot : MonoBehaviour {
         harvestCount = 0;
         watered = false;
         harvestable = false;
-        WateredChanged();
+        OnWateredChanged();
     }
 
     public void Harvest() {
@@ -93,7 +106,7 @@ public class Plot : MonoBehaviour {
         harvestable = false;
     }
 
-    void HarvestableChanged() {
+    void OnHarvestableChanged() {
         if(harvestable) {
             if(harvestCount == 0) {
                 harvestIcon.color = Palette.instance.seeds;
@@ -108,14 +121,17 @@ public class Plot : MonoBehaviour {
                 seedIcon.SetActive(false);
                 coinIcon.SetActive(true);
             }
+            AudioManager.PlaySound("Vegetation");
             harvestIcon.gameObject.SetActive(true);
         } else {
             harvestIcon.gameObject.SetActive(false);
         }
+        HarvestableChanged?.Invoke();
     }
 
-    void WateredChanged() {
+    void OnWateredChanged() {
         waterIcon.SetActive(currentCrop != null && !watered);
+        WateredChanged?.Invoke();
     }
 
     public void Water() {

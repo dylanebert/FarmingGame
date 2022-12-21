@@ -17,8 +17,10 @@ public class UIShop : MonoBehaviour {
     [SerializeField] TextMeshProUGUI infoDescription;
     [SerializeField] Image cropsButton;
     [SerializeField] Image upgradesButton;
+    [SerializeField] Image settingsButton;
     [SerializeField] RectTransform cropsContent;
     [SerializeField] RectTransform upgradesContent;
+    [SerializeField] RectTransform settingsContent;
 
     int _cropIndex;
     int cropIndex {
@@ -46,6 +48,8 @@ public class UIShop : MonoBehaviour {
         }
     }
 
+    public Tab currentTab { get; private set; }
+
     List<UIShopButton> cropButtons = new List<UIShopButton>();
     List<UIShopButton> upgradeButtons = new List<UIShopButton>();
     Vector2 minSize;
@@ -54,8 +58,42 @@ public class UIShop : MonoBehaviour {
     Sequence contentSequence;
     Color buttonLight;
     Color buttonDark;
-    Tab currentTab;
     bool active;
+
+    void HandleButtonClicked(UIButton button) {
+        UIShopButton shopButton = button as UIShopButton;
+        ShopManager.TryBuyCrop((ICrop)shopButton.purchasable);
+    }
+
+    void HandleButtonHovered(UIButton button) {
+        UIShopButton shopButton = button as UIShopButton;
+        infoBox.SetActive(true);
+        infoTitle.text = shopButton.purchasable.name;
+        infoDescription.text = shopButton.purchasable.description;
+    }
+
+    void HandleButtonUnhovered(UIButton button) {
+        infoBox.SetActive(false);
+    }
+
+    void OnDisable() {
+        openSequence?.Kill();
+        contentSequence?.Kill();
+    }
+
+    void OnDestroy() {
+        UpgradeManager.Changed -= PopulateUpgrades;
+        for(int i = 0; i < cropButtons.Count; i++) {
+            cropButtons[i].Clicked -= HandleButtonClicked;
+            cropButtons[i].Hovered -= HandleButtonHovered;
+            cropButtons[i].Unhovered -= HandleButtonUnhovered;
+        }
+        for(int i = 0; i < upgradeButtons.Count; i++) {
+            upgradeButtons[i].Clicked -= HandleUpgradeButtonClicked;
+            upgradeButtons[i].Hovered -= HandleButtonHovered;
+            upgradeButtons[i].Unhovered -= HandleButtonUnhovered;
+        }
+    }
 
     void Awake() {
         instance = this;
@@ -64,21 +102,14 @@ public class UIShop : MonoBehaviour {
         minSize = new Vector2(0, 0);
         maxSize = new Vector2(828, 392);
         body.sizeDelta = minSize;
+    }
+
+    void Start() {
         foreach(ICrop crop in CropManager.crops.Values) {
             UIShopButton button = Instantiate(shopButtonPrefab, cropsContent);
-            button.Clicked += (UIButton button) => {
-                UIShopButton shopButton = button as UIShopButton;
-                ShopManager.TryBuyCrop((ICrop)shopButton.purchasable);
-            };
-            button.Hovered += (UIButton button) => {
-                UIShopButton shopButton = button as UIShopButton;
-                infoBox.SetActive(true);
-                infoTitle.text = shopButton.purchasable.name;
-                infoDescription.text = shopButton.purchasable.description;
-            };
-            button.Unhovered += (UIButton button) => {
-                infoBox.SetActive(false);
-            };
+            button.Clicked += HandleButtonClicked;
+            button.Hovered += HandleButtonHovered;
+            button.Unhovered += HandleButtonUnhovered;
             button.Initialize(crop);
             cropButtons.Add(button);
         }
@@ -110,7 +141,6 @@ public class UIShop : MonoBehaviour {
         }
         UpgradeManager.Changed += PopulateUpgrades;
         PopulateUpgrades();
-        UpdateCropIndex();
         SetTab(Tab.Crops);
     }
 
@@ -127,8 +157,10 @@ public class UIShop : MonoBehaviour {
                 break;
         }
         contentSequence.Append(content.DOAnchorPos(new Vector2(-cropIndex * 384, 0), 0.2f).SetEase(Ease.OutQuint));
-        leftButton.gameObject.SetActive(cropIndex > 0);
-        rightButton.gameObject.SetActive(cropIndex < (cropButtons.Count - 1) / 6);
+        if(currentTab == Tab.Crops) {
+            leftButton.gameObject.SetActive(cropIndex > 0);
+            rightButton.gameObject.SetActive(cropIndex < (cropButtons.Count - 1) / 6);
+        }
     }
 
     void UpdateUpgradeIndex() {
@@ -144,30 +176,31 @@ public class UIShop : MonoBehaviour {
                 break;
         }
         contentSequence.Append(content.DOAnchorPos(new Vector2(-upgradeIndex * 384, 0), 0.2f).SetEase(Ease.OutQuint));
-        leftButton.gameObject.SetActive(upgradeIndex > 0);
-        rightButton.gameObject.SetActive(upgradeIndex < upgradeButtons.Count / 6);
+        if(currentTab == Tab.Upgrades) {
+            leftButton.gameObject.SetActive(upgradeIndex > 0);
+            rightButton.gameObject.SetActive(upgradeIndex < (upgradeButtons.Count - 1) / 6);
+        }
+    }
+
+    void HandleUpgradeButtonClicked(UIButton button) {
+        UIShopButton shopButton = button as UIShopButton;
+        ShopManager.TryBuyUpgrade((IUpgrade)shopButton.purchasable);
     }
 
     void PopulateUpgrades() {
         foreach(UIShopButton button in upgradeButtons.ToList()) {
-            Destroy(button.gameObject);
+            button.Clicked -= HandleUpgradeButtonClicked;
+            button.Hovered -= HandleButtonHovered;
+            button.Unhovered -= HandleButtonUnhovered;
+            if(button != null && button.gameObject != null)
+                Destroy(button.gameObject);
         }
         upgradeButtons.Clear();
         foreach(IUpgrade upgrade in UpgradeManager.available) {
             UIShopButton button = Instantiate(shopButtonPrefab, upgradesContent);
-            button.Clicked += (UIButton button) => {
-                UIShopButton shopButton = button as UIShopButton;
-                ShopManager.TryBuyUpgrade((IUpgrade)shopButton.purchasable);
-            };
-            button.Hovered += (UIButton button) => {
-                UIShopButton shopButton = button as UIShopButton;
-                infoBox.SetActive(true);
-                infoTitle.text = shopButton.purchasable.name;
-                infoDescription.text = shopButton.purchasable.description;
-            };
-            button.Unhovered += (UIButton button) => {
-                infoBox.SetActive(false);
-            };
+            button.Clicked += HandleUpgradeButtonClicked;
+            button.Hovered += HandleButtonHovered;
+            button.Unhovered += HandleButtonUnhovered;
             button.Initialize(upgrade);
             upgradeButtons.Add(button);
         }
@@ -197,11 +230,8 @@ public class UIShop : MonoBehaviour {
             b.RemoveAt(0);
             idx++;
         }
-    }
-
-    void OnDisable() {
-        openSequence?.Kill();
-        contentSequence?.Kill();
+        upgradeIndex = 0;
+        UpdateUpgradeIndex();
     }
 
     public void Show() {
@@ -229,13 +259,29 @@ public class UIShop : MonoBehaviour {
     }
 
     public void Left() {
-        cropIndex--;
-        UpdateCropIndex();
+        switch(currentTab) {
+            case Tab.Crops:
+                cropIndex--;
+                UpdateCropIndex();
+                break;
+            case Tab.Upgrades:
+                upgradeIndex--;
+                UpdateUpgradeIndex();
+                break;
+        }
     }
 
     public void Right() {
-        cropIndex++;
-        UpdateCropIndex();
+        switch(currentTab) {
+            case Tab.Crops:
+                cropIndex++;
+                UpdateCropIndex();
+                break;
+            case Tab.Upgrades:
+                upgradeIndex++;
+                UpdateUpgradeIndex();
+                break;
+        }
     }
 
     public static string GetPriceText(IPurchasable crop) {
@@ -259,14 +305,30 @@ public class UIShop : MonoBehaviour {
             case Tab.Crops:
                 cropsButton.color = buttonDark;
                 upgradesButton.color = buttonLight;
+                settingsButton.color = buttonLight;
                 cropsContent.gameObject.SetActive(true);
                 upgradesContent.gameObject.SetActive(false);
+                settingsContent.gameObject.SetActive(false);
+                UpdateCropIndex();
                 break;
             case Tab.Upgrades:
                 cropsButton.color = buttonLight;
                 upgradesButton.color = buttonDark;
+                settingsButton.color = buttonLight;
                 cropsContent.gameObject.SetActive(false);
                 upgradesContent.gameObject.SetActive(true);
+                settingsContent.gameObject.SetActive(false);
+                UpdateUpgradeIndex();
+                break;
+            case Tab.Settings:
+                cropsButton.color = buttonLight;
+                upgradesButton.color = buttonLight;
+                settingsButton.color = buttonDark;
+                cropsContent.gameObject.SetActive(false);
+                upgradesContent.gameObject.SetActive(false);
+                settingsContent.gameObject.SetActive(true);
+                leftButton.gameObject.SetActive(false);
+                rightButton.gameObject.SetActive(false);
                 break;
         }
     }
@@ -274,5 +336,6 @@ public class UIShop : MonoBehaviour {
     public enum Tab {
         Crops,
         Upgrades,
+        Settings,
     }
 }
