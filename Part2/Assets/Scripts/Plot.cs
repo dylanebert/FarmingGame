@@ -65,7 +65,7 @@ public class Plot : MonoBehaviour {
 
     void Update() {
         if(currentCrop == null || !watered) return;
-        growth = Mathf.Clamp(growth + Time.deltaTime / currentCrop.growthTime, 0, 1);
+        growth = Mathf.Clamp(growth + Time.unscaledDeltaTime / currentCrop.growthTime, 0, 1);
         harvestable = growth == 1;
     }
 

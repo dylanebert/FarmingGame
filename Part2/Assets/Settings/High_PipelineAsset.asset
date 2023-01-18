@@ -24,7 +24,7 @@ MonoBehaviour:
   m_OpaqueDownsampling: 1
   m_SupportsTerrainHoles: 1
   m_StoreActionsOptimization: 0
-  m_SupportsHDR: 1
+  m_SupportsHDR: 0
   m_MSAA: 2
   m_RenderScale: 1
   m_UpscalingFilter: 0
@@ -35,13 +35,13 @@ MonoBehaviour:
   m_MainLightShadowmapResolution: 4096
   m_AdditionalLightsRenderingMode: 1
   m_AdditionalLightsPerObjectLimit: 2
-  m_AdditionalLightShadowsSupported: 1
+  m_AdditionalLightShadowsSupported: 0
   m_AdditionalLightsShadowmapResolution: 2048
   m_AdditionalLightsShadowResolutionTierLow: 256
   m_AdditionalLightsShadowResolutionTierMedium: 512
   m_AdditionalLightsShadowResolutionTierHigh: 1024
-  m_ReflectionProbeBlending: 1
-  m_ReflectionProbeBoxProjection: 1
+  m_ReflectionProbeBlending: 0
+  m_ReflectionProbeBoxProjection: 0
   m_ShadowDistance: 60
   m_ShadowCascadeCount: 2
   m_Cascade2Split: 0.33333334
@@ -50,14 +50,14 @@ MonoBehaviour:
   m_CascadeBorder: 0.2
   m_ShadowDepthBias: 1
   m_ShadowNormalBias: 0
-  m_SoftShadowsSupported: 1
+  m_SoftShadowsSupported: 0
   m_ConservativeEnclosingSphere: 0
   m_NumIterationsEnclosingSphere: 64
   m_AdditionalLightsCookieResolution: 2048
   m_AdditionalLightsCookieFormat: 3
   m_UseSRPBatcher: 1
-  m_SupportsDynamicBatching: 0
-  m_MixedLightingSupported: 1
+  m_SupportsDynamicBatching: 1
+  m_MixedLightingSupported: 0
   m_SupportsLightLayers: 0
   m_DebugLevel: 0
   m_UseAdaptivePerformance: 1

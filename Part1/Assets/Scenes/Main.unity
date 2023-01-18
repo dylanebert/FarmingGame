@@ -1876,12 +1876,20 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -516098083770646512, guid: a6c2b2e4c3a62fc4a83a539ace7a3545, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -516098083770646512, guid: a6c2b2e4c3a62fc4a83a539ace7a3545, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a6c2b2e4c3a62fc4a83a539ace7a3545, type: 3}
       propertyPath: m_Name
       value: FarmHouse
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a6c2b2e4c3a62fc4a83a539ace7a3545, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a6c2b2e4c3a62fc4a83a539ace7a3545, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1918,7 +1926,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.8792683, b: 0.55, a: 1}
+  m_Color: {r: 1, g: 0.8784314, b: 0.54901963, a: 1}
   m_Intensity: 1.25
   m_Range: 10
   m_SpotAngle: 30
@@ -4983,6 +4991,10 @@ PrefabInstance:
     - target: {fileID: 4772099235349318133, guid: 0188e8e4d666f9245860a6b3dfeb4f35, type: 3}
       propertyPath: m_Name
       value: StylizedWater_Lowpoly
+      objectReference: {fileID: 0}
+    - target: {fileID: 4772099235349318133, guid: 0188e8e4d666f9245860a6b3dfeb4f35, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4772099235349318133, guid: 0188e8e4d666f9245860a6b3dfeb4f35, type: 3}
       propertyPath: m_StaticEditorFlags

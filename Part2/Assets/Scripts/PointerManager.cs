@@ -33,7 +33,7 @@ public class PointerManager : MonoBehaviour {
         raycastHitResults = new RaycastHit[1];
         waterMask = LayerMask.GetMask("WaterIcon");
         harvestMask = LayerMask.GetMask("HarvestIcon");
-        Cursor.SetCursor(cursorTexture, hotSpot, CursorMode.Auto);
+        // Cursor.SetCursor(cursorTexture, hotSpot, CursorMode.Auto);
     }
 
     void OnEnable() {

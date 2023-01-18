@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class GameController : MonoBehaviour {
     public static GameController instance { get; private set; }
@@ -8,14 +7,6 @@ public class GameController : MonoBehaviour {
 
     void Awake() {
         instance = this;
-    }
-
-    void Update() {
-        if(Keyboard.current.f1Key.wasPressedThisFrame) {
-            Time.timeScale = 1;
-        }
-        if(Keyboard.current.f2Key.wasPressedThisFrame) {
-            Time.timeScale = 5;
-        }
+        Application.targetFrameRate = 60;
     }
 }
