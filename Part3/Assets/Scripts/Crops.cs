@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class Wheat : CropBase {
     public override string name => "Wheat";
     public override string description => "Wheat";
@@ -7,6 +9,7 @@ public class Wheat : CropBase {
     public override int seedYield => 2;
     public override int coinsCost => 0;
     public override int menuIndex => 0;
+    public override Color color => Palette.instance.wheat;
 }
 
 public class Corn : CropBase {
@@ -18,6 +21,7 @@ public class Corn : CropBase {
     public override int seedYield => 2;
     public override int coinsCost => 1;
     public override int menuIndex => 1;
+    public override Color color => Palette.instance.corn;
 }
 
 public class Potato : CropBase {
@@ -29,6 +33,7 @@ public class Potato : CropBase {
     public override int seedYield => 2;
     public override int coinsCost => 1;
     public override int menuIndex => 1;
+    public override Color color => Palette.instance.potato;
 }
 
 public class Tomato : CropBase {
@@ -40,6 +45,7 @@ public class Tomato : CropBase {
     public override int seedYield => 4;
     public override int coinsCost => 25;
     public override int menuIndex => 2;
+    public override Color color => Palette.instance.tomato;
 }
 
 public class Strawberry : CropBase {
@@ -51,6 +57,7 @@ public class Strawberry : CropBase {
     public override int seedYield => 4;
     public override int coinsCost => 25;
     public override int menuIndex => 3;
+    public override Color color => Palette.instance.strawberry;
 }
 
 public class Pumpkin : CropBase {
@@ -62,6 +69,7 @@ public class Pumpkin : CropBase {
     public override int seedYield => 4;
     public override int coinsCost => 50;
     public override int menuIndex => 4;
+    public override Color color => Palette.instance.pumpkin;
 }
 
 public class Peppers : CropBase {
@@ -73,6 +81,7 @@ public class Peppers : CropBase {
     public override int seedYield => 4;
     public override int coinsCost => 100;
     public override int menuIndex => 5;
+    public override Color color => Palette.instance.peppers;
 }
 
 public class Blueberries : CropBase {
@@ -84,6 +93,7 @@ public class Blueberries : CropBase {
     public override int seedYield => 4;
     public override int coinsCost => 100;
     public override int menuIndex => 5;
+    public override Color color => Palette.instance.blueberries;
 }
 
 public class Rhubarb : CropBase {
@@ -95,4 +105,5 @@ public class Rhubarb : CropBase {
     public override int seedYield => 4;
     public override int coinsCost => 100;
     public override int menuIndex => 5;
+    public override Color color => Palette.instance.rhubarb;
 }

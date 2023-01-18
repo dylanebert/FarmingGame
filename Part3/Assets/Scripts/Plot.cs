@@ -45,6 +45,8 @@ public class Plot : MonoBehaviour {
     public SpriteRenderer harvestIcon;
     public GameObject seedIcon;
     public GameObject coinIcon;
+    public Transform cropsPivot;
+    public MeshRenderer[] cropMeshes;
     public TextMeshPro text;
 
     public void Initialize(int index) {
@@ -60,13 +62,21 @@ public class Plot : MonoBehaviour {
         harvestCount = PlayerPrefs.GetInt("Plot" + index + "HarvestCount", 0);
         watered = PlayerPrefs.GetInt("Plot" + index + "Watered", 0) == 1;
         growth = PlayerPrefs.GetFloat("Plot" + index + "Growth", 0);
+        for(int i = 0; i < cropMeshes.Length; i++) {
+            cropMeshes[i].material.color = currentCrop == null ? Color.white : currentCrop.color;
+            cropMeshes[i].enabled = currentCrop != null;
+        }
         OnWateredChanged();
     }
 
     void Update() {
         if(currentCrop == null || !watered) return;
         growth = Mathf.Clamp(growth + Time.unscaledDeltaTime / currentCrop.growthTime, 0, 1);
+        cropsPivot.transform.localScale = new Vector3(1, growth, 1);
         harvestable = growth == 1;
+        for(int i = 0; i < cropMeshes.Length; i++) {
+            cropMeshes[i].material.color = currentCrop.color;
+        }
     }
 
     public void SetActive(bool active) {
@@ -104,6 +114,7 @@ public class Plot : MonoBehaviour {
         growth = 0;
         watered = false;
         harvestable = false;
+        cropsPivot.transform.localScale = new Vector3(1, growth, 1);
     }
 
     void OnHarvestableChanged() {
@@ -146,6 +157,8 @@ public class Plot : MonoBehaviour {
         harvestCount = 0;
         watered = false;
         harvestable = false;
+        for(int i = 0; i < cropMeshes.Length; i++)
+            cropMeshes[i].enabled = false;
         WateredChanged();
     }
 }
