@@ -74,9 +74,6 @@ public class Plot : MonoBehaviour {
         growth = Mathf.Clamp(growth + Time.unscaledDeltaTime / currentCrop.growthTime, 0, 1);
         cropsPivot.transform.localScale = new Vector3(1, growth, 1);
         harvestable = growth == 1;
-        for(int i = 0; i < cropMeshes.Length; i++) {
-            cropMeshes[i].material.color = currentCrop.color;
-        }
     }
 
     public void SetActive(bool active) {
@@ -97,6 +94,10 @@ public class Plot : MonoBehaviour {
         harvestCount = 0;
         watered = false;
         harvestable = false;
+        for(int i = 0; i < cropMeshes.Length; i++) {
+            cropMeshes[i].material.color = currentCrop == null ? Color.white : currentCrop.color;
+            cropMeshes[i].enabled = currentCrop != null;
+        }
         OnWateredChanged();
     }
 
