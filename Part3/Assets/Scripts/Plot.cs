@@ -159,6 +159,6 @@ public class Plot : MonoBehaviour {
         harvestable = false;
         for(int i = 0; i < cropMeshes.Length; i++)
             cropMeshes[i].enabled = false;
-        WateredChanged();
+        OnWateredChanged();
     }
 }
