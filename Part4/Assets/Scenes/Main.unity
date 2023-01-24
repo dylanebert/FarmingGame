@@ -22786,7 +22786,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <style=muted>Click to Harvest</style>
+  m_text: Click to Harvest
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eab0930b24af2ff45969c5d5ab73566c, type: 2}
   m_sharedMaterial: {fileID: -3101497472207535769, guid: eab0930b24af2ff45969c5d5ab73566c, type: 2}

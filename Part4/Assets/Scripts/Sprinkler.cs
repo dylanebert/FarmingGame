@@ -12,6 +12,6 @@ public class Sprinkler : UpgradeBase {
     }
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/Sprinkler");
     }
 }

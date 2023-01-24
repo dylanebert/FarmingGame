@@ -98,6 +98,7 @@ public class Plot : MonoBehaviour {
             cropMeshes[i].material.color = currentCrop == null ? Color.white : currentCrop.color;
             cropMeshes[i].enabled = currentCrop != null;
         }
+        cropsPivot.transform.localScale = new Vector3(1, growth, 1);
         OnWateredChanged();
     }
 

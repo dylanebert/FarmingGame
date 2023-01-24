@@ -76,7 +76,7 @@ public class Strawberry : CropBase {
     public override Color color => Palette.instance.strawberry;
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/Strawberry");
     }
 }
 
@@ -92,7 +92,7 @@ public class Pumpkin : CropBase {
     public override Color color => Palette.instance.pumpkin;
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/Pumpkin");
     }
 }
 
@@ -108,7 +108,7 @@ public class Peppers : CropBase {
     public override Color color => Palette.instance.peppers;
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/Peppers");
     }
 }
 
@@ -124,7 +124,7 @@ public class Blueberries : CropBase {
     public override Color color => Palette.instance.blueberries;
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/Blueberries");
     }
 }
 
@@ -140,6 +140,6 @@ public class Rhubarb : CropBase {
     public override Color color => Palette.instance.rhubarb;
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/Rhubarb");
     }
 }

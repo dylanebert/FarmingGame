@@ -8,6 +8,6 @@ public class Sickle : UpgradeBase {
     public override int menuIndex => 0;
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/Sickle");
     }
 }

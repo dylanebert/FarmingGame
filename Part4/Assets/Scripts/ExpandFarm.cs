@@ -8,15 +8,15 @@ public abstract class Expand : UpgradeBase {
     public override void Apply() {
         CropManager.Expand();
     }
+
+    public override Sprite GetSprite() {
+        return Resources.Load<Sprite>("Sprites/ExpandFarm");
+    }
 }
 
 public class ExpandFarmA : Expand {
     public override string name => "Expand Farm I";
     public override int coinsCost => 10;
-
-    public override Sprite GetSprite() {
-        return null;
-    }
 }
 
 public class ExpandFarmB : Expand {
@@ -25,10 +25,6 @@ public class ExpandFarmB : Expand {
 
     protected override string[] GetPrerequisites() {
         return new string[] { "Expand Farm I" };
-    }
-
-    public override Sprite GetSprite() {
-        return null;
     }
 }
 
@@ -39,10 +35,6 @@ public class ExpandFarmC : Expand {
     protected override string[] GetPrerequisites() {
         return new string[] { "Expand Farm II" };
     }
-
-    public override Sprite GetSprite() {
-        return null;
-    }
 }
 
 public class ExpandFarmD : Expand {
@@ -51,9 +43,5 @@ public class ExpandFarmD : Expand {
 
     protected override string[] GetPrerequisites() {
         return new string[] { "Expand Farm III" };
-    }
-
-    public override Sprite GetSprite() {
-        return null;
     }
 }

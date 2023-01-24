@@ -8,6 +8,6 @@ public class WateringCan : UpgradeBase {
     public override int menuIndex => 1;
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/WateringCan");
     }
 }

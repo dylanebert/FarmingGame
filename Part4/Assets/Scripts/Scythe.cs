@@ -12,6 +12,6 @@ public class Scythe : UpgradeBase {
     }
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/Scythe");
     }
 }

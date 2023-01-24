@@ -8,6 +8,6 @@ public class Shovel : UpgradeBase {
     public override int menuIndex => 2;
 
     public override Sprite GetSprite() {
-        return null;
+        return Resources.Load<Sprite>("Sprites/Shovel");
     }
 }
