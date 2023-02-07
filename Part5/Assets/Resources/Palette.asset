@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de6daab27f7eb1945888becb7e025125, type: 3}
+  m_Name: Palette
+  m_EditorClassIdentifier: 
+  seeds: {r: 0.20392157, g: 0.4627451, b: 0.1764706, a: 1}
+  coins: {r: 0.78099996, g: 0.6915103, b: 0.17897913, a: 1}
+  water: {r: 0.36552152, g: 0.56598777, b: 0.6981132, a: 1}
+  wheat: {r: 0.90588236, g: 0.83656126, b: 0.3725491, a: 1}
+  corn: {r: 0.8980392, g: 0.6513107, b: 0.3176471, a: 1}
+  potato: {r: 0.4716981, g: 0.39957938, b: 0.31372374, a: 1}
+  tomato: {r: 0.7264151, g: 0.2706924, b: 0.3035627, a: 1}
+  strawberry: {r: 0.764151, g: 0.2270826, b: 0.27999574, a: 1}
+  pumpkin: {r: 0.7169812, g: 0.4416477, b: 0.1318975, a: 1}
+  peppers: {r: 0.38598138, g: 0.5471698, b: 0.20389818, a: 1}
+  blueberries: {r: 0.2713154, g: 0.30840287, b: 0.6320754, a: 1}
+  rhubarb: {r: 0.59607846, g: 0.2784314, b: 0.4483551, a: 1}
